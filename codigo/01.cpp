@@ -3,15 +3,28 @@
 
 using namespace std;
 
+
+
 class PError
 {
 public:
 
 	static void parametros()
 	{
-		cout << "Los parámetros ingresados no son válidos" << endl;
+		cout << "ERROR: Los parámetros ingresados no son válidos" << endl;
+	}
+
+	static void archivo_crear()
+	{
+		cout << "ERROR: Ha ocurrido un error al intentar crear el archivo." << endl;
+	}
+
+	static void archivo_abrir()
+	{
+		cout << "ERROR: No se ha podido abrir el archivo especificado." << endl;
 	}
 };
+
 
 class Archivo
 {
@@ -28,22 +41,30 @@ public:
 			salida.close();
 		}
 		else
-			cout << "Ha ocurrido un error al intentar crear el archivo." << endl;
+			PError::archivo_crear();
 	}
 
 	// Método que dado un archivo, inserta una linea de texto.
 	static void insertarLinea(char* NOMBRE_ARCHIVO, char* TEXTO)
 	{
-		ofstream salida(NOMBRE_ARCHIVO, ios::in | ios::trunc);
-		if(!salida.good())
+		// Verificamos si existe el archivo
+		ifstream entrada(NOMBRE_ARCHIVO);
+		
+		if(!entrada.is_open())
 		{
-			cout << "No se ha podido abrir el archivo especificado." << endl;
+			PError::archivo_abrir();
 			return;
 		}
+		entrada.close();
 
+		// Si existe, insertamos texto en linea
+		ofstream salida(NOMBRE_ARCHIVO, ios::app);
 		salida << TEXTO << endl;
+		salida.close();
+		cout << "Se ha registrado el texto en el archivo exitosamente." << endl;
 	}
 };
+
 
 
 
