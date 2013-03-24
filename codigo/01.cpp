@@ -1,8 +1,38 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 
+
+
+/* *******************************************************************
+ * 						FUNCIONES AUXILIARES
+ * *******************************************************************/
+
+ bool texto_esta_en_linea(string oracion, string texto)
+{
+	int i, j=0;
+
+	for(i=0; oracion[i]; i++)
+	{
+		if(oracion[i] == texto [j])
+		{ 
+			if (!texto[++j] && 
+				(!oracion[i+1] || oracion[i+1] == ' ')) 
+				return true;
+		}
+		else
+			j = 0;
+	}
+
+	return false;
+}
+
+
+/* *******************************************************************
+ * 									CLASES
+ * *******************************************************************/
 
 
 class PError
@@ -29,6 +59,7 @@ public:
 			 << endl;
 	}
 };
+
 
 
 class Archivo
@@ -69,16 +100,79 @@ public:
 		cout << "Se ha registrado el texto en el archivo exitosamente." 
 			 << endl;
 	}
+
+	// Método que envía a la salida estandar las lineas contenidas
+	// en el archivo de texto.
+	static void leer(char* NOMBRE_ARCHIVO)
+	{
+		ifstream entrada(NOMBRE_ARCHIVO);
+
+		// Verificamos si existe el archivo
+		if(!entrada.is_open())
+		{
+			PError::archivo_abrir();
+			return;
+		}
+
+		// Enviamos lineas a la salida estandar
+		string linea;
+
+		while(entrada.good())
+		{
+			getline(entrada,linea);
+			cout << linea << endl;
+		}
+
+		entrada.close();
+	}
+
+	// Método que busca el TEXTO en el archivo con ruta NOMBRE_ARCHIVO
+	// y envía las líneas que lo contienen a la salida estandar.
+	static void buscar(char* NOMBRE_ARCHIVO, char* TEXTO)
+	{
+		ifstream entrada(NOMBRE_ARCHIVO);
+
+		// Verificamos si existe el archivo
+		if(!entrada.is_open())
+		{
+			PError::archivo_abrir();
+			return;
+		}
+
+		// Buscamos e imprimimos las líneas que contienen al TEXTO.
+		string linea;
+
+		while(entrada.good())
+		{
+			getline(entrada,linea);
+			
+			if(texto_esta_en_linea(linea, TEXTO))
+				cout << linea << endl;
+		}
+
+		entrada.close();
+	}
+
+	// Método que elimina el archivo con ruta NOMBRE_ARCHIVO.
+	static void eliminar(char* NOMBRE_ARCHIVO)
+	{
+		remove(NOMBRE_ARCHIVO);
+		cout << "Se ha eliminado el archivo " << NOMBRE_ARCHIVO << endl;
+	}
 };
 
 
 
+/* *******************************************************************
+ * 							PROGRAMA PRINCIPAL
+ * *******************************************************************/
+
 
 int main(int argc, char *argv[]) {
 
-	if (!argv[2] || argv[2][2])
+	if (!argv[2] || argv[2][2] || argv[2][0] != '-')
 	{
-		cout << "Los parámetros ingresados son válidos" << endl;
+		PError::parametros();
 		return 0;
 	}
 
@@ -95,18 +189,29 @@ int main(int argc, char *argv[]) {
 						PError::parametros();
 						break;
 					}
-
 					Archivo::insertarLinea(argv[1], argv[3]);
 					break;
 
-		// case "-l":
-		// 			break;
-		// case "-s":
-		// 			break;
-		
-		// case "-e":
-		// 			break;
+		// Muestra por pantalla las líneas de texto contenidas en el archivo
+		// de text con ruta [NOMBRE_ARCHIVO].
+		case 'l':	Archivo::leer(argv[1]);
+					break;
 
+		// Busca el [TEXTO] en cada línea del archivo de texto con ruta
+		// [NOMBRE_ARCHIVO] y envía a la salida estandar las que la contienen.
+		case 's':	if(!argv[3]) 
+					{
+						PError::parametros();
+						break;
+					}
+					Archivo::buscar(argv[1], argv[3]);
+					break;
+		
+		// Elimina el archivo con ruta [NOMBRE_ARCHIVO].
+		case 'e':	Archivo::eliminar(argv[1]);
+					break;
+
+		// Caso por defecto
 		default: PError::parametros();
 				 break;
 	}
