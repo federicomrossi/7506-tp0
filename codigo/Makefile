@@ -11,6 +11,9 @@
 # Nombre del ejecutable.
 target = 01
 
+# Archivos de prueba.
+test_files = *.test
+
 # Extensión de los archivos a compilar (c para C, cpp o cc o cxx para C++).
 extension = cpp
 
@@ -154,4 +157,4 @@ $(target): $(o_files)
 	$(LD) $(LDFLAGS) $(o_files) $(LOADLIBS) $(LDLIBS) -o $(target)
 
 clean:
-	$(RM) $(o_files) $(o_files:.o=.deps) $(target)
+	$(RM) $(o_files) $(o_files:.o=.deps) $(test_files) $(target)

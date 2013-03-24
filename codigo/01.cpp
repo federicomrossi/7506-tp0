@@ -9,19 +9,24 @@ class PError
 {
 public:
 
+	// Imprime mensaje de error relacionado al ingreso inválido de parámetros
 	static void parametros()
 	{
-		cout << "ERROR: Los parámetros ingresados no son válidos" << endl;
+		cout << "PError-01: Los parámetros ingresados no son válidos" << endl;
 	}
 
+	// Imprime mensaje de error para error al crear archivo.
 	static void archivo_crear()
 	{
-		cout << "ERROR: Ha ocurrido un error al intentar crear el archivo." << endl;
+		cout << "PError-02: Ha ocurrido un error al intentar crear el archivo."
+			 << endl;
 	}
 
+	// Imprime mensaje de error para archivos que no se han podido abrir.
 	static void archivo_abrir()
 	{
-		cout << "ERROR: No se ha podido abrir el archivo especificado." << endl;
+		cout << "PError-03: No se ha podido abrir el archivo especificado." 
+			 << endl;
 	}
 };
 
@@ -61,7 +66,8 @@ public:
 		ofstream salida(NOMBRE_ARCHIVO, ios::app);
 		salida << TEXTO << endl;
 		salida.close();
-		cout << "Se ha registrado el texto en el archivo exitosamente." << endl;
+		cout << "Se ha registrado el texto en el archivo exitosamente." 
+			 << endl;
 	}
 };
 
